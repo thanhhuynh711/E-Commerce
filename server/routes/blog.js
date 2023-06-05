@@ -1,0 +1,11 @@
+const router = require("express").Router();
+const ctrls = require("../controllers/blog");
+const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
+
+router.get("/", ctrls.getBlogs);
+router.post("/", [verifyAccessToken, isAdmin], ctrls.createNewBlog);
+router.put("/likes/:bid", [verifyAccessToken], ctrls.likeBlog);
+router.put("/dislike/:bid", [verifyAccessToken], ctrls.dislikeBlog);
+router.put("/:bid", [verifyAccessToken, isAdmin], ctrls.updateBlog);
+
+module.exports = router;
