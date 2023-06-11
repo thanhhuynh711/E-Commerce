@@ -1,25 +1,10 @@
-const mongoose = require("mongoose"); // Erase if already required
+const router = require("express").Router();
+const ctrls = require("../controllers/order");
+const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 
-// Declare the Schema of the Mongo model
-var orderSchema = new mongoose.Schema({
-  product: [
-    {
-      product: { type: mongoose.Types.ObjectId, ref: "Product" },
-      count: Number,
-      color: String,
-    },
-  ],
-  status: {
-    type: String,
-    default: "Processing",
-    enum: ["Cancelled", "Processing", "Successed"],
-  },
-  paymentIntent: {},
-  orderBy: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-  },
-});
+router.post("/", verifyAccessToken, ctrls.createOrder);
+router.get("/", verifyAccessToken, ctrls.getUserOrder);
+router.get("/admin", verifyAccessToken, isAdmin, ctrls.getOrders);
+router.put("/status/:oid", verifyAccessToken, isAdmin, ctrls.updateStatus);
 
-//Export the model
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = router;
