@@ -22,8 +22,6 @@ const BestSeller = () => {
   const [newProducts, setNewProducts] = useState(null);
   const [activedTab, setActivedTab] = useState(1);
   const [products, setProducts] = useState(null);
-  console.log("best", bestSellers);
-  console.log("product", products);
 
   const fetchProduct = async () => {
     const response = await Promise.all([
@@ -53,7 +51,7 @@ const BestSeller = () => {
         {tabs.map((el) => (
           <span
             key={el.id}
-            className={`font-semibold cursor-pointer capitalize px-8 border-r text-gray-400 ${
+            className={`font-semibold cursor-pointer uppercase px-8 border-r text-gray-400 ${
               activedTab === el.id ? "text-gray-900" : ""
             }  `}
             onClick={() => setActivedTab(el.id)}
