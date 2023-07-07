@@ -5,6 +5,8 @@ import trending from "../assets/trending.png";
 import { renderStartFromNumber } from "../ultils/helper";
 import { SelectOption } from "./";
 import icons from "../ultils/icons";
+import { Link } from "react-router-dom";
+import path from "../ultils/path";
 
 const { AiFillEye, HiOutlineMenu, AiFillHeart } = icons;
 
@@ -13,7 +15,8 @@ const Product = ({ productData, isNew }) => {
 
   return (
     <div className="w-full px-[10px] text-base">
-      <div
+      <Link
+        to={`/${path.DETAIL_PRODUCT}/${productData?._id}/${productData?.title}`}
         onMouseEnter={(e) => {
           e.stopPropagation();
           setIsShowOption(true);
@@ -50,10 +53,14 @@ const Product = ({ productData, isNew }) => {
           <span className="line-clamp-1">{productData?.title}</span>
           <span>{`${formatMoney(productData?.price)} VNĐ`}</span>
           <span className="flex h-4">
-            {renderStartFromNumber(productData?.totalRatings)}
+            {renderStartFromNumber(productData?.totalRatings)?.map(
+              (el, index) => (
+                <span key={index}>{el}</span>
+              )
+            )}
           </span>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

@@ -12,6 +12,9 @@ module.exports = {
       backgroundColor: {
         main: "#ee3131",
       },
+      backgroundImage: {
+        login: "./src/assets/lucy.jpg",
+      },
       colors: {
         main: "#ee3131",
       },
@@ -36,10 +39,21 @@ module.exports = {
           transform: "translateY(0)",
         },
       },
+      "slide-top-sm": {
+        "0%": {
+          "-webkit-transform": "translateY(2px)",
+          transform: "translateY(2px)",
+        },
+        "100%": {
+          "-webkit-transform": "translateY(0)",
+          transform: "translateY(0)",
+        },
+      },
     },
     animation: {
       "slide-top":
         " slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;",
+      "slide-top-sm": " slide-top-sm 0.1s linear both;",
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],

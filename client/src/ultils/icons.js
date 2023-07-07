@@ -8,6 +8,7 @@ import {
   AiOutlineStar,
   AiFillEye,
   AiFillHeart,
+  AiOutlineRight,
 } from "react-icons/ai";
 
 const icons = {
@@ -21,6 +22,7 @@ const icons = {
   AiFillEye,
   HiOutlineMenu,
   AiFillHeart,
+  AiOutlineRight,
 };
 
 export default icons;

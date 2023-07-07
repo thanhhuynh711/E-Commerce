@@ -11,7 +11,9 @@ const ProductCard = ({ price, totalRatings, image, title }) => (
         </span>
         <span>{`${formatMoney(price)} VNĐ`}</span>
         <span className="flex h-4">
-          {renderStartFromNumber(totalRatings, 14)}
+          {renderStartFromNumber(totalRatings, 14)?.map((el, index) => (
+            <span key={index}>{el}</span>
+          ))}
         </span>
       </div>
     </div>

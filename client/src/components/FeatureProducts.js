@@ -12,7 +12,6 @@ const FeatureProducts = () => {
     });
     if (response.success) setProducts(response.products);
   };
-  console.log(products);
 
   useEffect(() => {
     fetchProducts();
@@ -27,7 +26,7 @@ const FeatureProducts = () => {
         {products?.map((el) => {
           return (
             <ProductCard
-              key={el.id}
+              key={el._id}
               image={el.thumb}
               title={el.title}
               totalRatings={el.totalRatings}
