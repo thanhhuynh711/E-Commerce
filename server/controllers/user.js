@@ -7,26 +7,75 @@ const {
 const jwt = require("jsonwebtoken");
 const sendMail = require("../ultils/sendMail");
 const crypto = require("crypto");
+const makeToken = require("uniqid");
+
+// const register = asyncHandler(async (req, res) => {
+//   const { email, password, firstname, lastname } = req.body;
+//   if (!email || !password || !firstname || !lastname)
+//     return res.status(400).json({
+//       sucess: false,
+//       mes: "Missing inputs",
+//     });
+
+//   const user = await User.findOne({ email });
+//   if (user) throw new Error("User has existed!");
+//   else {
+//     const newUser = await User.create(req.body);
+//     return res.status(200).json({
+//       sucess: newUser ? true : false,
+//       mes: newUser
+//         ? "Register is successfully. Please go loging"
+//         : "Something went wrong",
+//     });
+//   }
+// });
 
 const register = asyncHandler(async (req, res) => {
-  const { email, password, firstname, lastname } = req.body;
-  if (!email || !password || !firstname || !lastname)
+  const { email, password, firstname, lastname, mobile } = req.body;
+  if (!email || !password || !firstname || !lastname || !mobile)
     return res.status(400).json({
       sucess: false,
       mes: "Missing inputs",
     });
-
   const user = await User.findOne({ email });
   if (user) throw new Error("User has existed!");
   else {
-    const newUser = await User.create(req.body);
-    return res.status(200).json({
-      sucess: newUser ? true : false,
-      mes: newUser
-        ? "Register is successfully. Please go loging"
-        : "Something went wrong",
+    const token = makeToken();
+    res.cookie(
+      "dataregister",
+      { ...req.body, token },
+      {
+        httpOnly: true,
+        maxAge: 15 * 60 * 1000,
+      }
+    );
+    const html = `Xin vui lòng click vào link dưới đây để hoàn tất quá đăng ký. Link này sẽ hết hạn sau 15 phút kể từ bây giờ. <a href=${process.env.URL_SERVER}/api/user/finalregister/${token}>Click here</a>`;
+    await sendMail({ email, html, subject: "Hoàn tất đăng ký Digital World" });
+    return res.json({
+      sucess: true,
+      mes: "Please check your email to active account",
     });
   }
+});
+
+const finalRegister = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  const { token } = req.params;
+  if (!cookie || cookie?.dataregister?.token !== token) {
+    res.clearCookie("dataregister");
+    return res.redirect(`${process.env.CLIENT_URL}/finalregister/failed`);
+  }
+  const newUser = await User.create({
+    email: cookie?.dataregister?.email,
+    password: cookie?.dataregister?.password,
+    mobile: cookie?.dataregister?.mobile,
+    firstname: cookie?.dataregister?.firstname,
+    lastname: cookie?.dataregister?.lastname,
+  });
+  res.clearCookie("dataregister");
+  if (newUser)
+    return res.redirect(`${process.env.CLIENT_URL}/finalregister/success`);
+  else return res.redirect(`${process.env.CLIENT_URL}/finalregister/failed`);
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -112,23 +161,26 @@ const logout = asyncHandler(async (req, res) => {
   });
 });
 const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.body;
   if (!email) throw new Error("Missing email");
   const user = await User.findOne({ email });
   if (!user) throw new Error("User not found");
   const resetToken = user.createPasswordChangedToken();
   await user.save();
 
-  const html = `Xin vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn.Link này sẽ hết hạn sau 15 phút kể từ bây giờ. <a href=${process.env.URL_SERVER}/api/user/reset-password/${resetToken}>Click here</a>`;
+  const html = `Xin vui lòng click vào link dưới đây để thay đổi mật khẩu của bạn.Link này sẽ hết hạn sau 15 phút kể từ bây giờ. <a href=${process.env.CLIENT_URL}/reset-password/${resetToken}>Click here</a>`;
 
   const data = {
     email,
     html,
+    subject: "Forgot password",
   };
   const rs = await sendMail(data);
   return res.status(200).json({
-    success: true,
-    rs,
+    success: rs.response?.includes("OK") ? true : false,
+    mes: rs.response?.includes("OK")
+      ? "Check your mail please."
+      : "Something went wrong. Please try later",
   });
 });
 
@@ -273,4 +325,5 @@ module.exports = {
   updateUserByAdmin,
   updateUserAddress,
   updateCart,
+  finalRegister,
 };
