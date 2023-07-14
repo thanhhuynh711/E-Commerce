@@ -35,7 +35,7 @@ function App() {
           <Route path={path.PRODUCTS} element={<Products />} />
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
           <Route
-            path={path.DETAIL_PRODUCT__PID__TITLE}
+            path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE}
             element={<DetailProduct />}
           />
           <Route path={path.OUR_SERVICES} element={<Services />} />

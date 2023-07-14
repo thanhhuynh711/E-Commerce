@@ -17,10 +17,9 @@ const Home = () => {
   const { categories } = useSelector((state) => state.app);
   const { isLoggedIn, current } = useSelector((state) => state.user);
 
-  console.log({ isLoggedIn, current });
   return (
-    <>
-      <div className="w-main flex">
+    <div className="w-main m-auto">
+      <div className=" flex mt-5">
         <div className="flex flex-col gap-5 w-[25%] flex-auto">
           <Sidebar />
           <Dealdaily />
@@ -60,11 +59,12 @@ const Home = () => {
                     <h4 className="font-semibold uppercase">{el?.title}</h4>
                     <ul className="text-sm">
                       {el?.brand?.map((item) => (
-                        <span className="flex items-center gap-1 text-gray-500">
+                        <span
+                          key={item}
+                          className="flex items-center gap-1 text-gray-500"
+                        >
                           <AiOutlineRight size={14} />
-                          <li key={item} className="mt-1">
-                            {item}
-                          </li>
+                          <li className="mt-1">{item}</li>
                         </span>
                       ))}
                     </ul>
@@ -79,7 +79,7 @@ const Home = () => {
           BLOG POSTS
         </h3>
       </div>
-    </>
+    </div>
   );
 };
 

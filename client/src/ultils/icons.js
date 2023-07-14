@@ -1,7 +1,7 @@
 import { ImPhone } from "react-icons/im";
 import { MdEmail } from "react-icons/md";
 import { BsHandbagFill } from "react-icons/bs";
-import { BiSolidUserCircle } from "react-icons/bi";
+import { BiSolidUserCircle, BiLogOut } from "react-icons/bi";
 import { HiHome, HiOutlineMenu } from "react-icons/hi";
 import {
   AiFillStar,
@@ -23,6 +23,7 @@ const icons = {
   HiOutlineMenu,
   AiFillHeart,
   AiOutlineRight,
+  BiLogOut,
 };
 
 export default icons;

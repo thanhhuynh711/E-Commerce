@@ -92,7 +92,11 @@ const Dealdaily = () => {
         />
         <span className="line-clamp-1 text-center">{dealdaily?.title}</span>
         <span className="flex h-4">
-          {renderStartFromNumber(dealdaily?.totalRatings, 18)}
+          {renderStartFromNumber(dealdaily?.totalRatings, 18)?.map(
+            (el, index) => (
+              <span key={index}>{el}</span>
+            )
+          )}
         </span>
         <span>{`${formatMoney(dealdaily?.price)} VNĐ`}</span>
       </div>

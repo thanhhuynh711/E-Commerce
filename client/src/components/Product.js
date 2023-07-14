@@ -16,7 +16,9 @@ const Product = ({ productData, isNew }) => {
   return (
     <div className="w-full px-[10px] text-base">
       <Link
-        to={`/${path.DETAIL_PRODUCT}/${productData?._id}/${productData?.title}`}
+        to={`/${productData?.category?.toLowerCase()}/${productData?._id}/${
+          productData?.title
+        }`}
         onMouseEnter={(e) => {
           e.stopPropagation();
           setIsShowOption(true);

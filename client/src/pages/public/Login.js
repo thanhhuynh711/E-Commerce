@@ -1,16 +1,22 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import lucy from "../../assets/download (1).jpg";
 import { InputField, Button } from "../../components";
 import icons from "../../ultils/icons";
 import { Link } from "react-router-dom";
 import path from "../../ultils/path";
-import { apiRegister, apiLogin, apiForgotPassword } from "../../apis";
+import {
+  apiRegister,
+  apiLogin,
+  apiForgotPassword,
+  apiFinalRegister,
+} from "../../apis";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import to from "../../ultils/path";
-import { register } from "../../store/user/userSlice";
+import { login } from "../../store/user/userSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { validate } from "../../ultils/helper";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,6 +32,8 @@ const Login = () => {
 
   const { HiHome } = icons;
 
+  const [isVerifiedEmail, setIsVerifiedEmail] = useState(false);
+  const [invalidFields, setInvalidFields] = useState([]);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const resetPayload = () => {
@@ -38,6 +46,7 @@ const Login = () => {
     });
   };
 
+  const [token, setToken] = useState("");
   const [email, setEmail] = useState("");
   const handleForgotPassword = async () => {
     const response = await apiForgotPassword({ email });
@@ -47,33 +56,76 @@ const Login = () => {
     } else toast.info(response.mes, { theme: "colored" });
   };
 
+  useEffect(() => {
+    resetPayload();
+  }, [isRegister]);
+
   const handleSubmit = useCallback(async () => {
     const { firstname, lastname, mobile, ...data } = payload;
-    if (isRegister) {
-      const response = await apiRegister(payload);
-      if (response.sucess) {
-        Swal.fire("Congratulation", response.mes, "success").then(() => {
-          setIsRegister(false);
-          resetPayload();
-        });
-      } else Swal.fire("Oops!", response.mes, "error");
-    } else {
-      const rs = await apiLogin(data);
-      if (rs.sucess) {
-        dispatch(
-          register({
-            isLoggedIn: true,
-            token: rs.accessToken,
-            userData: rs.userData,
-          })
-        );
-        navigate(`/${to.HOME}`);
-      } else Swal.fire("Oops!", rs.mes, "error");
+
+    const invalids = isRegister
+      ? validate(payload, setInvalidFields)
+      : validate(data, setInvalidFields);
+
+    if (invalids === 0) {
+      if (isRegister) {
+        const response = await apiRegister(payload);
+        if (response.sucess) {
+          setIsVerifiedEmail(true);
+        } else Swal.fire("Oops!", response.mes, "error");
+      } else {
+        const rs = await apiLogin(data);
+        if (rs.sucess) {
+          dispatch(
+            login({
+              isLoggedIn: true,
+              token: rs.accessToken,
+              userData: rs.userData,
+            })
+          );
+          navigate(`/${to.HOME}`);
+        } else Swal.fire("Oops!", rs.mes, "error");
+      }
     }
   }, [payload, isRegister]);
 
+  const finalRegister = async () => {
+    const response = await apiFinalRegister(token);
+    if (response.sucess) {
+      Swal.fire("Congratulation", response.mes, "success").then(() => {
+        setIsRegister(false);
+        resetPayload();
+      });
+    } else Swal.fire("Oops!", response.mes, "error");
+    setIsVerifiedEmail(false);
+    setToken("");
+  };
+
   return (
     <div className="w-screen h-screen relative">
+      {isVerifiedEmail && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-overlay z-30 flex flex-col justify-center items-center">
+          <div className="bg-white w-[500px] rounded-md p-8">
+            <h4 className="">
+              We sent a code to your mail. Please check your mail enter your
+              code:
+            </h4>
+            <input
+              type="text"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              className="p-2 border rounded-md outline-none"
+            />
+            <button
+              type="button"
+              className="px-4 py-2 bg-main font-semibold text-white rounded-md ml-4"
+              onClick={finalRegister}
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      )}
       {isForgotPassword && (
         <div className="absolute animate-slice-right top-0 left-0 bottom-0 right-0 z-30 flex-col bg-white flex items-center py-8">
           <div className="flex flex-col gap-4">
@@ -120,11 +172,15 @@ const Login = () => {
                 value={payload.firstname}
                 setValue={setPayload}
                 nameKey="firstname"
+                invalidFields={invalidFields}
+                setInvalidFields={setInvalidFields}
               />
               <InputField
                 value={payload.lastname}
                 setValue={setPayload}
                 nameKey="lastname"
+                invalidFields={invalidFields}
+                setInvalidFields={setInvalidFields}
               />
             </div>
           )}
@@ -132,12 +188,16 @@ const Login = () => {
             value={payload.email}
             setValue={setPayload}
             nameKey="email"
+            invalidFields={invalidFields}
+            setInvalidFields={setInvalidFields}
           />
           {isRegister && (
             <InputField
               value={payload.mobile}
               setValue={setPayload}
               nameKey="mobile"
+              invalidFields={invalidFields}
+              setInvalidFields={setInvalidFields}
             />
           )}
           <InputField
@@ -145,6 +205,8 @@ const Login = () => {
             setValue={setPayload}
             nameKey="password"
             type="password"
+            invalidFields={invalidFields}
+            setInvalidFields={setInvalidFields}
           />
           <Button
             name={isRegister ? "Register" : "Login"}
