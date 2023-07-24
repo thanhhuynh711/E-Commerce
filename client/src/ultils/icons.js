@@ -10,6 +10,7 @@ import {
   AiFillHeart,
   AiOutlineRight,
   AiFillGift,
+  AiOutlineDown,
 } from "react-icons/ai";
 import { FaTty } from "react-icons/fa";
 
@@ -31,6 +32,7 @@ const icons = {
   AiFillGift,
   BsFillReplyFill,
   FaTty,
+  AiOutlineDown,
 };
 
 export default icons;
