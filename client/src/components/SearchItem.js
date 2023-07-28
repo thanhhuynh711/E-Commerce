@@ -1,7 +1,12 @@
 import React, { memo, useEffect, useState } from "react";
 import icons from "../ultils/icons";
 import { colors } from "../ultils/contants";
-import { createSearchParams, useNavigate, useParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { apiGetProducts } from "../apis";
 import useDebounce from "../hooks/useDebounce";
 
@@ -16,6 +21,7 @@ const SearchItem = ({
   const navigate = useNavigate();
   const { category } = useParams();
   const [selected, setSelected] = useState([]);
+  const [params] = useSearchParams();
   const [price, setPrice] = useState({
     from: "",
     to: "",
@@ -35,16 +41,18 @@ const SearchItem = ({
   };
 
   useEffect(() => {
+    let param = [];
+    for (let i of params.entries()) param.push(i);
+    const queries = {};
+    for (let i of param) queries[i[0]] = i[1];
     if (selected.length > 0) {
-      navigate({
-        pathname: `/${category}`,
-        search: createSearchParams({
-          color: selected.join(","),
-        }).toString(),
-      });
-    } else {
-      navigate(`/${category}`);
-    }
+      queries.color = selected.join(",");
+      queries.page = 1;
+    } else delete queries.color;
+    navigate({
+      pathname: `/${category}`,
+      search: createSearchParams(queries).toString(),
+    });
   }, [selected]);
 
   useEffect(() => {
@@ -52,22 +60,26 @@ const SearchItem = ({
   }, [type]);
 
   useEffect(() => {
-    if (price.from > price.to) {
+    if (price.from && price.to && price.from > price.to)
       alert("From price cannot grealet than To price");
-      price.from = "";
-      changeActiveFilter(null);
-    }
   }, [price]);
 
   const daboucePriceFrom = useDebounce(price.from, 500);
   const daboucePriceTo = useDebounce(price.to, 500);
+
   useEffect(() => {
-    const data = {};
-    if (Number(price.from) > 0) data.from = price.from;
-    if (Number(price.to) > 0) data.to = price.to;
+    let param = [];
+    for (let i of params.entries()) param.push(i);
+    const queries = {};
+    for (let i of param) queries[i[0]] = i[1];
+    if (Number(price.from) > 0) queries.from = price.from;
+    else delete queries.from;
+    if (Number(price.to) > 0) queries.to = price.to;
+    else delete queries.to;
+    queries.page = 1;
     navigate({
       pathname: `/${category}`,
-      search: createSearchParams(data).toString(),
+      search: createSearchParams(queries).toString(),
     });
   }, [daboucePriceFrom, daboucePriceTo]);
 
@@ -88,6 +100,7 @@ const SearchItem = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelected([]);
+                    changeActiveFilter(null);
                   }}
                   className="underline cursor-pointer hover:text-main"
                 >

@@ -5,7 +5,13 @@ import {
   useNavigate,
   createSearchParams,
 } from "react-router-dom";
-import { Breadcrumb, Product, SearchItem, InputSelec } from "../../components";
+import {
+  Breadcrumb,
+  Product,
+  SearchItem,
+  InputSelec,
+  Pagination,
+} from "../../components";
 import { apiGetProducts } from "../../apis";
 import Masonry from "react-masonry-css";
 import { sorts } from "../../ultils/contants";
@@ -26,7 +32,7 @@ const Products = () => {
 
   const fetchProductsByCategory = async (queries) => {
     const response = await apiGetProducts(queries);
-    if (response.success) setProducts(response.products);
+    if (response.success) setProducts(response);
   };
   const { category } = useParams();
 
@@ -34,8 +40,26 @@ const Products = () => {
     let param = [];
     for (let i of params.entries()) param.push(i);
     const queries = {};
+    let priceQuery = {};
     for (let i of params) queries[i[0]] = i[1];
-    fetchProductsByCategory(queries);
+    if (queries.to && queries.from) {
+      priceQuery = {
+        $and: [
+          { price: { gte: queries.from } },
+          { price: { lie: queries.to } },
+        ],
+      };
+      delete queries.price;
+    } else {
+      if (queries.from) queries.price = { gte: queries.from };
+      if (queries.to) queries.price = { lte: queries.to };
+    }
+
+    delete queries.to;
+    delete queries.from;
+    const q = { ...priceQuery, ...queries };
+    fetchProductsByCategory(q);
+    window.scrollTo(0, 300);
   }, [params]);
 
   const changeActiveFilter = useCallback(
@@ -54,10 +78,12 @@ const Products = () => {
   );
 
   useEffect(() => {
-    navigate({
-      pathname: `/${category}`,
-      search: createSearchParams({ sort }).toString(),
-    });
+    if (sort) {
+      navigate({
+        pathname: `/${category}`,
+        search: createSearchParams({ sort }).toString(),
+      });
+    }
   }, [sort]);
 
   return (
@@ -102,10 +128,13 @@ const Products = () => {
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column"
         >
-          {products?.map((el) => (
+          {products?.products?.map((el) => (
             <Product key={el._id} pid={el.id} productData={el} normal={true} />
           ))}
         </Masonry>
+      </div>
+      <div className="w-main m-auto my-4 flex justify-end">
+        <Pagination totalCount={products?.counts} />
       </div>
       <div className="w-full h-[500px]"></div>
     </div>
@@ -121,10 +150,7 @@ export default Products;
 // for (let i of params) queries[i[0]] = i[1];
 // if (queries.to && queries.from) {
 //   priceQuery = {
-//     $and: [
-//       { price: { gte: queries.from } },
-//       { price: { lie: queries.to } },
-//     ],
+//     $and: [{ price: { gte: queries.from } }, { price: { lie: queries.to } }],
 //   };
 //   delete queries.price;
 // }
@@ -135,4 +161,3 @@ export default Products;
 // delete queries.from;
 // const q = { ...priceQuery, ...queries };
 // fetchProductsByCategory(q);
-// }, [params]);

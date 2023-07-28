@@ -1,6 +1,11 @@
 import { ImPhone } from "react-icons/im";
 import { MdEmail } from "react-icons/md";
-import { BsHandbagFill, BsShieldShaded, BsFillReplyFill } from "react-icons/bs";
+import {
+  BsHandbagFill,
+  BsShieldShaded,
+  BsFillReplyFill,
+  BsThreeDots,
+} from "react-icons/bs";
 import { BiSolidUserCircle, BiLogOut, BiSolidTruck } from "react-icons/bi";
 import { HiHome, HiOutlineMenu } from "react-icons/hi";
 import {
@@ -33,6 +38,7 @@ const icons = {
   BsFillReplyFill,
   FaTty,
   AiOutlineDown,
+  BsThreeDots,
 };
 
 export default icons;

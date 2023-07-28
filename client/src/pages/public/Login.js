@@ -208,11 +208,9 @@ const Login = () => {
             invalidFields={invalidFields}
             setInvalidFields={setInvalidFields}
           />
-          <Button
-            name={isRegister ? "Register" : "Login"}
-            fw
-            handleOnClick={handleSubmit}
-          />
+          <Button fw handleOnClick={handleSubmit}>
+            {isRegister ? "Register" : "Login"}
+          </Button>
           <div className="flex items-center justify-between my-2 w-full text-sm">
             {!isRegister && (
               <span

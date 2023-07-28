@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 
 const SelectQuantity = ({ quantity, handleQuantity, handleChangeQuantity }) => {
-  console.log(quantity);
   return (
     <div className="flex items-center">
       <span
