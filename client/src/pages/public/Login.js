@@ -1,22 +1,22 @@
 import React, { useState, useCallback, useEffect } from "react";
 import lucy from "../../assets/download (1).jpg";
-import { InputField, Button } from "../../components";
-import icons from "../../ultils/icons";
+import { InputField, Button } from "components";
+import icons from "ultils/icons";
 import { Link } from "react-router-dom";
-import path from "../../ultils/path";
+import path from "ultils/path";
 import {
   apiRegister,
   apiLogin,
   apiForgotPassword,
   apiFinalRegister,
-} from "../../apis";
+} from "apis/user";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import to from "../../ultils/path";
-import { login } from "../../store/user/userSlice";
+import to from "ultils/path";
+import { login } from "store/user/userSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { validate } from "../../ultils/helper";
+import { validate } from "ultils/helper";
 
 const Login = () => {
   const navigate = useNavigate();
