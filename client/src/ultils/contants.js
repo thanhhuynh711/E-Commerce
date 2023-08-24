@@ -29,8 +29,17 @@ export const navigation = [
   },
 ];
 
-const { BsShieldShaded, BiSolidTruck, AiFillGift, BsFillReplyFill, FaTty } =
-  icons;
+const {
+  BsShieldShaded,
+  BiSolidTruck,
+  AiFillGift,
+  BsFillReplyFill,
+  FaTty,
+  AiOutlineDashboard,
+  HiUserGroup,
+  BiLogoProductHunt,
+  FaMoneyBillWave,
+} = icons;
 
 export const productExtraInfomation = [
   {
@@ -167,4 +176,54 @@ export const voteOption = [
   { id: 3, text: "Neutral" },
   { id: 4, text: "Good" },
   { id: 5, text: "Perfect" },
+];
+
+export const adminSidebar = [
+  {
+    id: 1,
+    type: "SINGLE",
+    text: "Dashboard",
+    path: `/${path.ADMIN}/${path.DASHBOARD}`,
+    icon: <AiOutlineDashboard />,
+  },
+  {
+    id: 2,
+    type: "SINGLE",
+    text: "Manage users",
+    path: `/${path.ADMIN}/${path.MANAGE_USER}`,
+    icon: <HiUserGroup />,
+  },
+  {
+    id: 3,
+    type: "PARENT",
+    text: "Manage products",
+    icon: <BiLogoProductHunt />,
+    submenu: [
+      {
+        text: "Create product",
+        path: `/${path.ADMIN}/${path.CREATE_PRODUCTS}`,
+      },
+      {
+        text: "Manage products",
+        path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
+      },
+    ],
+  },
+  {
+    id: 4,
+    type: "SINGLE",
+    text: "Manage orders",
+    path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
+    icon: <FaMoneyBillWave />,
+  },
+];
+
+export const roles = [
+  { code: 1945, value: "Admin" },
+  { code: 1979, value: "User" },
+];
+
+export const blockStatus = [
+  { code: true, value: "Blocked" },
+  { code: false, value: "Active" },
 ];
