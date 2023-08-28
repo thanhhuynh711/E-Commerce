@@ -14,6 +14,7 @@ export { default as TopHeader } from "./headers/TopHeader";
 export { default as Footer } from "./footer/Footer";
 export { default as InputField } from "./inputs/InputField";
 export { default as InputForm } from "./inputs/InputForm";
+export { default as MarkdownEditor } from "./inputs/MarkdownEditor";
 export { default as Select } from "./inputs/Select";
 export { default as Button } from "./buttons/Button";
 export { default as Breadcrumb } from "./common/Breadcrumb";

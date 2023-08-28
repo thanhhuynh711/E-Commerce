@@ -1,4 +1,4 @@
-import { ImPhone } from "react-icons/im";
+import { ImPhone, ImBin } from "react-icons/im";
 import { MdEmail } from "react-icons/md";
 import {
   BsHandbagFill,
@@ -59,6 +59,7 @@ const icons = {
   RiDeleteBin6Line,
   AiOutlineEdit,
   BsReverseBackspaceReverse,
+  ImBin,
 };
 
 export default icons;
