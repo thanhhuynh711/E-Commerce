@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { InputForm, Select, Button, MarkdownEditor } from "components";
+import { InputForm, Select, Button, MarkdownEditor, Loading } from "components";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { validate, getBase64 } from "ultils/helper";
 import { toast } from "react-toastify";
 import { apiCreateProduct } from "apis";
+import { sowModal } from "store/app/appSlice";
 
 const CreateProducts = () => {
   const { categories } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
   const {
     register,
     formState: { errors },
@@ -71,15 +73,23 @@ const CreateProducts = () => {
           (el) => el._id === data.category
         )?.title;
       const finalPayload = { ...data, ...payload };
-      console.log(finalPayload);
       const formData = new FormData();
       for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
       if (finalPayload.thumb) formData.append("thumb", finalPayload.thumb[0]);
       if (finalPayload.images) {
         for (let image of finalPayload.images) formData.append("images", image);
       }
+      dispatch(sowModal({ isShowModal: true, modalChildren: <Loading /> }));
       const response = await apiCreateProduct(formData);
-      console.log(response);
+      dispatch(sowModal({ isShowModal: false, modalChildren: null }));
+      if (response.success) {
+        toast.success(response.mes);
+        reset();
+        setPayload({
+          thumb: "",
+          image: [],
+        });
+      } else toast.error(response.mes);
     }
   };
 

@@ -99,7 +99,7 @@ const DetailProduct = () => {
       </div>
       <div className="w-main m-auto mt-4 flex">
         <div className="flex flex-col gap-4 w-2/5">
-          <div className="h-[458px] w-[458px] overflow-hidden border">
+          <div className="h-[458px] w-[458px] flex items-center overflow-hidden border">
             <ReactImageMagnify
               {...{
                 smallImage: {
@@ -155,7 +155,7 @@ const DetailProduct = () => {
               ))}
             {product?.description?.length === 1 && (
               <div
-                className="text-sm "
+                className="text-sm line-clamp-[10] mb-8"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(product?.description[0]),
                 }}
