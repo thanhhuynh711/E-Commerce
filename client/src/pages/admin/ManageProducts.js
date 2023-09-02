@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { InputForm, Pagination } from "components";
+import React, { useCallback, useEffect, useState } from "react";
+import { InputForm, Pagination, CustomizeVarriants } from "components";
 import { useForm } from "react-hook-form";
-import { apiGetProducts } from "apis/product";
+import { apiGetProducts, apiDeleteProduct } from "apis/product";
 import moment from "moment";
 import {
   useSearchParams,
@@ -10,6 +10,12 @@ import {
   useLocation,
 } from "react-router-dom";
 import useDebounce from "hooks/useDebounce";
+import icons from "ultils/icons";
+import UpdateProduct from "./UpdateProduct";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+
+const { AiOutlineEdit, RiDeleteBin6Line, MdOutlineDashboardCustomize } = icons;
 
 const ManageProducts = () => {
   const navigate = useNavigate();
@@ -18,12 +24,17 @@ const ManageProducts = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
-    reset,
     watch,
   } = useForm();
   const [products, setProducts] = useState(null);
   const [counts, setCounts] = useState(0);
+  const [editProduct, setEditProduct] = useState(null);
+  const [update, setUpdate] = useState(false);
+  const [customizeVarriant, setCustomizeVarriant] = useState(null);
+
+  const render = useCallback(() => {
+    setUpdate(!update);
+  });
 
   const fetchProducts = async (params) => {
     const response = await apiGetProducts({
@@ -52,10 +63,44 @@ const ManageProducts = () => {
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchProducts(searchParams);
-  }, [params]);
+  }, [params, update]);
+
+  const handleDeleteProduct = (pid) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Are you sure remove this product",
+      icon: "warning",
+      showCancelButton: true,
+    }).then(async (rs) => {
+      if (rs.isConfirmed) {
+        const response = await apiDeleteProduct(pid);
+        if (response.success) toast.success(response.mes);
+        else toast.error(response.mes);
+        render();
+      }
+    });
+  };
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4 relative">
+      {editProduct && (
+        <div className="absolute inset-0 z-10 bg-gray-100 min-h-screen">
+          <UpdateProduct
+            editProduct={editProduct}
+            render={render}
+            setEditProduct={setEditProduct}
+          />
+        </div>
+      )}
+      {customizeVarriant && (
+        <div className="absolute inset-0 z-10 bg-gray-100 min-h-screen">
+          <CustomizeVarriants
+            customizeVarriant={customizeVarriant}
+            render={render}
+            setCustomizeVarriant={setCustomizeVarriant}
+          />
+        </div>
+      )}
       <div className=" p-4 w-full flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">ManageProducts</h1>
       </div>
@@ -84,6 +129,7 @@ const ManageProducts = () => {
             <th>Color</th>
             <th>Ratings</th>
             <th>UpdatedAt</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody className="text-center">
@@ -114,6 +160,26 @@ const ManageProducts = () => {
               <td className="py-2">{el.totalRatings}</td>
               <td className="py-2">
                 {moment(el.updatedAt).format("DD/MM/YYYY")}
+              </td>
+              <td className="py-2 flex items-center h-[64px] justify-center">
+                <span
+                  onClick={() => setEditProduct(el)}
+                  className="cursor-pointer hover:text-gray-600 mx-1 text-green-500"
+                >
+                  <AiOutlineEdit />
+                </span>
+                <span
+                  onClick={() => handleDeleteProduct(el._id)}
+                  className="cursor-pointer hover:text-gray-600 mx-1 text-red-500"
+                >
+                  <RiDeleteBin6Line />
+                </span>
+                <span
+                  onClick={() => setCustomizeVarriant(el)}
+                  className="cursor-pointer hover:text-gray-600 mx-1 text-blue-500"
+                >
+                  <MdOutlineDashboardCustomize />
+                </span>
               </td>
             </tr>
           ))}

@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const makeSKU = require("uniqid");
 
 const createProduct = asyncHandler(async (req, res) => {
   const { title, price, description, brand, category, color } = req.body;
@@ -101,13 +102,16 @@ const getProducts = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
+  const files = req?.files;
+  if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (files?.images) req.body.images = files?.images?.map((el) => el.path);
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
     new: true,
   });
   return res.status(200).json({
     success: updatedProduct ? true : false,
-    updatedProduct: updatedProduct ? updatedProduct : "Cannot update product",
+    mes: updatedProduct ? "Updated" : "Cannot update product",
   });
 });
 
@@ -116,7 +120,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
   const deletedProduct = await Product.findByIdAndDelete(pid);
   return res.status(200).json({
     success: deletedProduct ? true : false,
-    deletedProduct: deletedProduct ? deletedProduct : "Cannot delete product",
+    mes: deletedProduct ? "Deleted" : "Cannot delete product",
   });
 });
 
@@ -185,6 +189,34 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
   });
 });
 
+const addVarriant = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { title, price, color } = req.body;
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req?.files?.images?.map((el) => el.path);
+  if (!(title && price && color)) throw new Error("Missing inputs");
+  const response = await Product.findByIdAndUpdate(
+    pid,
+    {
+      $push: {
+        varriants: {
+          color,
+          price,
+          title,
+          thumb,
+          images,
+          sku: makeSKU().toUpperCase(),
+        },
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    status: response ? true : false,
+    response: response ? response : "Cannot upload images product",
+  });
+});
+
 module.exports = {
   createProduct,
   getProduct,
@@ -193,4 +225,5 @@ module.exports = {
   deleteProduct,
   ratings,
   uploadImagesProduct,
+  addVarriant,
 };

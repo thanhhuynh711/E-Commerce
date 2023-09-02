@@ -1,5 +1,5 @@
 import { ImPhone, ImBin } from "react-icons/im";
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdOutlineDashboardCustomize } from "react-icons/md";
 import {
   BsHandbagFill,
   BsShieldShaded,
@@ -60,6 +60,7 @@ const icons = {
   AiOutlineEdit,
   BsReverseBackspaceReverse,
   ImBin,
+  MdOutlineDashboardCustomize,
 };
 
 export default icons;

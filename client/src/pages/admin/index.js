@@ -4,3 +4,4 @@ export { default as Dashboard } from "./Dashboard";
 export { default as ManageProducts } from "./ManageProducts";
 export { default as ManageOder } from "./ManageOder";
 export { default as ManageUser } from "./ManageUser";
+export { default as UpdateProduct } from "./UpdateProduct";

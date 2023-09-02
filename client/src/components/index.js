@@ -4,6 +4,7 @@ export { default as Sidebar } from "./Sidebar/Sidebar";
 export { default as Banner } from "./common/Banner";
 export { default as BestSeller } from "./products/BestSeller";
 export { default as Product } from "./products/Product";
+export { default as CustomizeVarriants } from "./products/CustomizeVarriants";
 export { default as SelectOption } from "./search/SelectOption";
 export { default as Dealdaily } from "./products/Dealdaily";
 export { default as Countdown } from "./common/Countdown";
