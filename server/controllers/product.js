@@ -184,7 +184,7 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
     { new: true }
   );
   return res.status(200).json({
-    status: response ? true : false,
+    success: response ? true : false,
     updatedProduct: response ? response : "Cannot upload images product",
   });
 });
@@ -212,8 +212,8 @@ const addVarriant = asyncHandler(async (req, res) => {
     { new: true }
   );
   return res.status(200).json({
-    status: response ? true : false,
-    response: response ? response : "Cannot upload images product",
+    success: response ? true : false,
+    mes: response ? "Added varriant" : "Cannot upload images product",
   });
 });
 

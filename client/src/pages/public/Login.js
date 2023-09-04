@@ -143,12 +143,12 @@ const Login = () => {
             />
             <div className="flex items-center justify-end w-full gap-4">
               <Button
-                name="Submit"
+                children="Submit"
                 handleOnClick={handleForgotPassword}
                 style="px-4 py-2 rounded-md text-white bg-main text-semibold my-2"
               />
               <Button
-                name="Back"
+                children="Back"
                 handleOnClick={() => setIsForgotPassword(false)}
                 style="px-4 py-2 rounded-md text-white bg-blue-500 text-semibold my-2"
               />
@@ -177,6 +177,7 @@ const Login = () => {
                 nameKey="firstname"
                 invalidFields={invalidFields}
                 setInvalidFields={setInvalidFields}
+                fullwidth
               />
               <InputField
                 value={payload.lastname}
@@ -184,6 +185,7 @@ const Login = () => {
                 nameKey="lastname"
                 invalidFields={invalidFields}
                 setInvalidFields={setInvalidFields}
+                fullwidth
               />
             </div>
           )}
@@ -193,6 +195,7 @@ const Login = () => {
             nameKey="email"
             invalidFields={invalidFields}
             setInvalidFields={setInvalidFields}
+            fullwidth
           />
           {isRegister && (
             <InputField
@@ -201,6 +204,7 @@ const Login = () => {
               nameKey="mobile"
               invalidFields={invalidFields}
               setInvalidFields={setInvalidFields}
+              fullwidth
             />
           )}
           <InputField
@@ -210,6 +214,7 @@ const Login = () => {
             type="password"
             invalidFields={invalidFields}
             setInvalidFields={setInvalidFields}
+            fullwidth
           />
           <Button fw handleOnClick={handleSubmit}>
             {isRegister ? "Register" : "Login"}

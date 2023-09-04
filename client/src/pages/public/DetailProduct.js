@@ -18,6 +18,7 @@ import {
 } from "../../ultils/helper";
 import { productExtraInfomation } from "../../ultils/contants";
 import DOMPurify from "dompurify";
+import clsx from "clsx";
 
 const settings = {
   dots: false,
@@ -28,12 +29,20 @@ const settings = {
 };
 
 const DetailProduct = () => {
-  const { pid, title, category } = useParams();
+  const { pid, category } = useParams();
   const [product, setProduct] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState(null);
   const [update, setUpdate] = useState(false);
+  const [varriants, setVarriants] = useState(null);
+  const [currantProduct, setCurrantProduct] = useState({
+    title: "",
+    thumb: "",
+    images: [],
+    price: "",
+    color: "",
+  });
 
   const fetchProductData = async () => {
     const response = await apiGetProduct(pid);
@@ -42,6 +51,18 @@ const DetailProduct = () => {
       setCurrentImage(response.ProductData?.thumb);
     }
   };
+
+  useEffect(() => {
+    if (varriants) {
+      setCurrantProduct({
+        title: product?.varriants?.find((el) => el.sku === varriants)?.title,
+        color: product?.varriants?.find((el) => el.sku === varriants)?.color,
+        price: product?.varriants?.find((el) => el.sku === varriants)?.price,
+        images: product?.varriants?.find((el) => el.sku === varriants)?.images,
+        thumb: product?.varriants?.find((el) => el.sku === varriants)?.thumb,
+      });
+    }
+  }, [varriants]);
 
   const fetchProducts = async () => {
     const response = await apiGetProducts({ category });
@@ -63,6 +84,7 @@ const DetailProduct = () => {
   const rerender = useCallback(() => {
     setUpdate(!update);
   }, [update]);
+  console.log(product);
 
   const handleQuantity = useCallback(
     (number) => {
@@ -93,8 +115,13 @@ const DetailProduct = () => {
     <div className="w-full">
       <div className="h-[81px] flex items-center justify-center bg-gray-100">
         <div className="w-main">
-          <h3 className="font-semibold">{title}</h3>
-          <Breadcrumb title={title} category={product?.category} />
+          <h3 className="font-semibold">
+            {currantProduct.title || product?.title}
+          </h3>
+          <Breadcrumb
+            title={currantProduct.title || product?.title}
+            category={category}
+          />
         </div>
       </div>
       <div className="w-main m-auto mt-4 flex">
@@ -105,10 +132,10 @@ const DetailProduct = () => {
                 smallImage: {
                   alt: "",
                   isFluidWidth: true,
-                  src: currentImage,
+                  src: currantProduct.thumb || currentImage,
                 },
                 largeImage: {
-                  src: currentImage,
+                  src: currantProduct.thumb || currentImage,
                   width: 1800,
                   height: 1500,
                 },
@@ -120,16 +147,28 @@ const DetailProduct = () => {
               className="image-slider flex gap-2 w-full justify-between"
               {...settings}
             >
-              {product?.images.map((el) => (
-                <div className="flex-1" key={el}>
-                  <img
-                    onClick={(e) => handleClickImage(e, el)}
-                    src={el}
-                    alt="sub-product"
-                    className="h-[143px] cursor-pointer w-[143px] border object-cover"
-                  />
-                </div>
-              ))}
+              {currantProduct.images.length === 0 &&
+                product?.images.map((el) => (
+                  <div className="flex-1" key={el}>
+                    <img
+                      onClick={(e) => handleClickImage(e, el)}
+                      src={el}
+                      alt="sub-product"
+                      className="h-[143px] cursor-pointer w-[143px] border object-cover"
+                    />
+                  </div>
+                ))}
+              {currantProduct.images.length > 0 &&
+                currantProduct.images.map((el) => (
+                  <div className="flex-1" key={el}>
+                    <img
+                      onClick={(e) => handleClickImage(e, el)}
+                      src={el}
+                      alt="sub-product"
+                      className="h-[143px] cursor-pointer w-[143px] border object-cover"
+                    />
+                  </div>
+                ))}
             </Slider>
           </div>
         </div>
@@ -138,7 +177,9 @@ const DetailProduct = () => {
             <h2 className="text-[30px] font-semibold">{`${formatMoney(
               formatPrice(product?.price)
             )} VNĐ`}</h2>
-            <span className="text-sm text-main">{`In stock: ${product?.quantity}`}</span>
+            <span className="text-sm text-main">{`In stock: ${
+              currantProduct.price || product?.quantity
+            }`}</span>
           </div>
           <div className="flex items-center gap-1">
             {renderStartFromNumber(product?.totalRatings)?.map((el, index) => (
@@ -162,6 +203,47 @@ const DetailProduct = () => {
               ></div>
             )}
           </ul>
+          <div className="my-4 flex gap-4">
+            <span className="font-bold">Color:</span>
+            <div className="flex flex-wrap gap-4 items-center w-full">
+              <div
+                onClick={() => setVarriants(null)}
+                className={clsx(
+                  "flex items-center gap-2 border p-2 cursor-pointer",
+                  !varriants && "border-main"
+                )}
+              >
+                <img
+                  src={product?.thumb}
+                  alt="thumb"
+                  className="w-12 h-12 border rounded-md object-cover"
+                />
+                <span className="flex flex-col">
+                  <span>{product?.color}</span>
+                  <span className="text-sm">{product?.price}</span>
+                </span>
+              </div>
+              {product?.varriants?.map((el) => (
+                <div
+                  onClick={() => setVarriants(el.sku)}
+                  className={clsx(
+                    "flex items-center gap-2 border p-2 cursor-pointer",
+                    varriants === el.sku && "border-main"
+                  )}
+                >
+                  <img
+                    src={el.thumb}
+                    alt="thumb"
+                    className="w-12 h-12 border rounded-md object-cover"
+                  />
+                  <span className="flex flex-col">
+                    <span>{el.color}</span>
+                    <span className="text-sm">{el.price}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-4">
               <span className="font-semibold">Quantity</span>

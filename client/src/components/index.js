@@ -32,3 +32,4 @@ export { default as Pagination } from "./pagination/Pagination";
 export { default as PagiItem } from "./pagination/PagiItem";
 export { default as Loading } from "./common/Loading";
 export { default as AdminSidebar } from "./Sidebar/AdminSidebar";
+export { default as MemberSibar } from "./Sidebar/MemberSibar";

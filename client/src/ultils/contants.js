@@ -227,3 +227,34 @@ export const blockStatus = [
   { code: true, value: "Blocked" },
   { code: false, value: "Active" },
 ];
+
+export const menberSidebar = [
+  {
+    id: 1,
+    type: "SINGLE",
+    text: "Personal",
+    path: `/${path.MEMBER}/${path.PERSONAL}`,
+    icon: <AiOutlineDashboard />,
+  },
+  {
+    id: 2,
+    type: "SINGLE",
+    text: "My cart",
+    path: `/${path.MEMBER}/${path.MY_CART}`,
+    icon: <HiUserGroup />,
+  },
+  {
+    id: 3,
+    type: "SINGLE",
+    text: "Buy Histories",
+    path: `/${path.MEMBER}/${path.HISTOSY}`,
+    icon: <FaMoneyBillWave />,
+  },
+  {
+    id: 4,
+    type: "SINGLE",
+    text: "Wishlist",
+    path: `/${path.MEMBER}/${path.WISHLIST}`,
+    icon: <FaMoneyBillWave />,
+  },
+];
