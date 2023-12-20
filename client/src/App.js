@@ -70,7 +70,7 @@ function App() {
           <Route path={path.PERSONAL} element={<Personal />} />
           <Route path={path.HISTOSY} element={<History />} />
           <Route path={path.WISHLIST} element={<Wishlist />} />
-          <Route path={path.MY_CART} element={<MyCart />} />
+          <Route path={path.MY_CART} element={<MyCart id="cart" />} />
         </Route>
         <Route path={path.FINAL_REGISTER} element={<FinalRegister />} />
         <Route path={path.LOGIN} element={<Login />} />
